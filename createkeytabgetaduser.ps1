@@ -14,7 +14,7 @@ do {
         Write-Host 'AES256 will be verified as enabled and used to create the keytab.'
     } else {
         Write-Host 'RC4-HMAC will be used to create the keytab.'
-        $encType = 'RC4-HMAC'
+        $encType = 'RC4-HMAC-NT'
     }
 
 
@@ -27,24 +27,28 @@ do {
     $spn = $userInfo.ServicePrincipalNames
     $aes = $userInfo.KerberosEncryptionType
 
-    if ($null -eq $spn) {
-        $confirm = 'y'
-        Write-Host 'The user ' + $usr + ' has no SPNs assigned to it. This script will now terminate.'
-    } elseif ($trustStatus -eq 'False') {
-        $confirm = 'y'
-        Write-Host 'The user ' + $usr + ' is not trusted for delegation. In the user object, go to the delegation tab and set it to the middle radio button. This script will now terminate.'
-    } elseif (-not($aes -like 'AES256')) {
-        Write-Host 'The user ' + $usr + ' cannot use AES256. Enable the use of AES256 for this account. This script will now terminate.'
-        $confirm = 'y'
+    if ($spn.count -eq 0) {
+        Write-Host 'The user ' $usr ' has no SPNs assigned to it. This script will now terminate.'
+        break
+    } if ($trustStatus -eq $false) {
+        Write-Host 'The user ' $usr ' is not trusted for delegation. In the user object, go to the delegation tab and set it to the middle radio button. This script will now terminate.'
+        break
+    } if (-not($aes -like 'AES256')) {
+        Write-Host 'The user ' $usr ' cannot use AES256. Enable the use of AES256 for this account. This script will now terminate.'
+        break
     } else {
-        Write-Host 'The user ' + $usr + ' meets all requirements. The keytab will now be created.'
+        Write-Host 'The user ' $usr ' meets all requirements. The keytab will now be created.'
         $confirm = 'y'
+        $createKeytab = 'True'
     }
     
 	
 	} while ($confirm.ToLower() -ne 'y')
 	
-	$cmd = 'ktpass -out ' + $PWD + 'microstrategy.keytab -pass ' + $pwdd + ' -princ ' + $upn + ' -ptype KRB5_NT_PRINCIPAL /crypto ' + $encType
+    if ($createKeytab -eq 'True`') {
+        $cmd = 'ktpass -out ' + $PWD + '\microstrategy.keytab -pass ' + $pwdd + ' -princ ' + $upn + ' -ptype KRB5_NT_PRINCIPAL /crypto ' + $encType
 		Invoke-Expression $cmd
 		
-	Write-Host 'The keytab has been yeeted to ' $PWD
+	Write-Host 'The keytab has been yeeted to ' $PWD 
+    }
+    
