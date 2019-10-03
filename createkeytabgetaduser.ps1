@@ -7,13 +7,14 @@ do {
     $message  = 'Is AES256 required? If not, RC4-HMAC will be used.'
     $question = 'Use AES256?'
     $choices  = '&Y', '&N'
-    $encType  = 
+    $encType  = 'AES256-SHA1'
 
     $decision = $Host.UI.PromptForChoice($message, $question, $choices, 1)
     if ($decision -eq 0) {
         Write-Host 'AES256 will be verified as enabled and used to create the keytab.'
     } else {
         Write-Host 'RC4-HMAC will be used to create the keytab.'
+        $encType = 'RC4-HMAC'
     }
 
 
@@ -29,7 +30,7 @@ do {
     if ($null -eq $spn) {
         $confirm = 'y'
         Write-Host 'The user ' + $usr + ' has no SPNs assigned to it. This script will now terminate.'
-    } elseif ($trustStatus.ToLower() = 'false') {
+    } elseif ($trustStatus -eq 'False') {
         $confirm = 'y'
         Write-Host 'The user ' + $usr + ' is not trusted for delegation. In the user object, go to the delegation tab and set it to the middle radio button. This script will now terminate.'
     } elseif (-not($aes -like 'AES256')) {
@@ -43,7 +44,7 @@ do {
 	
 	} while ($confirm.ToLower() -ne 'y')
 	
-	$cmd = 'ktpass -out ' + $PWD + 'microstrategy.keytab -pass ' + $pwdd + ' -princ ' + $upn + ' -ptype KRB5_NT_PRINCIPAL /crypto AES256-SHA1'
+	$cmd = 'ktpass -out ' + $PWD + 'microstrategy.keytab -pass ' + $pwdd + ' -princ ' + $upn + ' -ptype KRB5_NT_PRINCIPAL /crypto ' + $encType
 		Invoke-Expression $cmd
 		
 	Write-Host 'The keytab has been yeeted to ' $PWD
