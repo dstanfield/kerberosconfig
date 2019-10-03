@@ -29,6 +29,18 @@ do {
 
     if ($spn.count -eq 0) {
         Write-Host 'The user ' $usr ' has no SPNs assigned to it. This script will now terminate.'
+        $messagespn  = 'Is AES256 required? If not, RC4-HMAC will be used.'
+        $questionspn = 'Use AES256?'
+        $choicesspn  = '&Y', '&N'
+        $spnArray  = 'AES256-SHA1'
+
+        $decision = $Host.UI.PromptForChoice($messagespn, $questionspn, $choicesspn, 1)
+        if ($decision -eq 0) {
+            Write-Host 'AES256 will be verified as enabled and used to create the keytab.'
+      } else {
+        Write-Host 'RC4-HMAC will be used to create the keytab.'
+        $encType = 'RC4-HMAC-NT'
+        }
         break
     } if ($trustStatus -eq $false) {
         Write-Host 'The user ' $usr ' is not trusted for delegation. In the user object, go to the delegation tab and set it to the middle radio button. This script will now terminate.'
