@@ -35,7 +35,7 @@ do {
 	
 	} while ($confirm.ToLower() -ne "y")
 	
-	$cmd = "ktpass -out " + $PWD + "microstrategy.keytab -pass " + $pwdd + " -princ " + $usr + "@" + $domain + " -ptype KRB5_NT_PRINCIPAL /crypto AES256-SHA1"
+	$cmd = "ktpass -out " + $PWD + "microstrategy.keytab -pass " + $pwdd + " -princ " + $upn + " -ptype KRB5_NT_PRINCIPAL /crypto AES256-SHA1"
 		Invoke-Expression $cmd
 		
 	Write-Host "The keytab has been yeeted to " $PWD
