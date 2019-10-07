@@ -29,23 +29,6 @@ do {
 
     if ($spn.count -eq 0) {
         Write-Host 'The user ' $usr ' has no SPNs assigned to it. This script will now terminate.'
-        # --------------incomplete add spn logic--------------
-        # $messagespn  = 'Adding SPNs requires input the base URLs that users will connect to Web/Library/Mobile/IntelligenceServer with, along with the hostname and FQDN of the machine. Note that any base URLs must just be the base: no http://, nothing after the .com, and no slashes or special characters. '
-        # $questionspn = 'Would you like to submit SPNs?'
-        # $choicesspn  = '&Y', '&N'
-        # $spnSubmit  = 'AES256-SHA1'
-        # $moreSPN = 'Yes'
-        # $setSPN = 'setspn -a '
-        # $decision = $Host.UI.PromptForChoice($messagespn, $questionspn, $choicesspn, 1)
-        # if ($decision -eq 0) {
-        #     do {
-        #         $spnSubmit = Read-Host -Prompt 'Enter the SPN to be attached to' $usr '. Valid SPN formats include HTTP/website.com, MSTRSVRSvc/exampleserver.example.com, HTTP/fully.qualified.domain.com.'
-        #         Invoke-Expression 
-        #     } while ($moreSPN -eq 'Yes')
-    #   } else {
-    #         Write-Host 'RC4-HMAC will be used to create the keytab.'
-    #         # $spnSubmit = 'nothing'
-    #     }
         break
     } if ($trustStatus -eq $false) {
         Write-Host 'The user ' $usr ' is not trusted for delegation. In the user object, go to the delegation tab and set it to the middle radio button. This script will now terminate.'
